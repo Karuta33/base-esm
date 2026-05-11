@@ -39,21 +39,6 @@ $ npm i
 npm start
 ```
 
-### Flags
-- `--autocleartmp` : Automatically clear tmp folder every 5 minutes.
-
-
-
-
-#
-### Terms
-1. Dont sell this script!
-2. Dont forget to star this repository!
-3. Follow my GitHub!
-4. Use with your own risk!
-
----------
-
 ### Thanks To
 [![WhiskeySockets](https://github.com/WhiskeySockets.png?size=100)](https://github.com/WhiskeySockets/Baileys)
 

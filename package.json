@@ -1,0 +1,52 @@
+{
+  "name": "Ashema",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Simple Base",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "author": "YUKISHIMA",
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "latest",
+    "awesome-phonenumber": "^2.69.0",
+    "axios": "latest",
+    "chalk": "^4.1.2",
+    "cheerio": "^1.0.0-rc.10",
+    "child_process": "^1.0.2",
+    "clui": "^0.3.6",
+    "figlet": "^1.5.2",
+    "file-type": "^16.5.3",
+    "form-data": "^4.0.0",
+    "formdata-node": "^6.0.3",
+    "fs": "0.0.1-security",
+    "human-readable": "^0.2.1",
+    "jimp": "latest",
+    "libphonenumber-js": "latest",
+    "link-preview-js": "^3.0.4",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.34",
+    "multistream": "^2.1.1",
+    "mumaker": "^2.0.0",
+    "node-cache": "latest",
+    "node-fetch": "^2.6.4",
+    "node-os-utils": "latest",
+    "node-webpmux": "latest",
+    "os": "latest",
+    "parse-ms": "^2.1.0",
+    "path": "latest",
+    "performance-now": "latest",
+    "pino": "latest",
+    "querystring": "latest",
+    "readline": "latest",
+    "request": "latest",
+    "util": "latest",
+    "uuid": "latest"
+  }
+}

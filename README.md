@@ -1,47 +1,60 @@
-# Halo, Saya [Nama Kamu]! 👋
-
-![Header Image](https://capsule-render.vercel.app/render?type=waving&color=auto&height=300&section=header&text=Welcome%20to%20my%20Profile&fontSize=90)
-
-### 🚀 Tentang Saya
-Saya adalah seorang **[Pekerjaan/Status, misal: Fullstack Developer]** yang antusias dalam membangun solusi teknologi yang berdampak. Saya senang mengeksplorasi teknologi baru dan berkontribusi pada proyek open-source.
-
-- 🔭 Saat ini saya sedang mengerjakan **[Nama Proyek]**
-- 🌱 Sedang memperdalam **[Nama Teknologi, misal: Next.js & Go]**
-- 💬 Tanya saya tentang **[Keahlianmu, misal: React, UI/UX, atau Kopi]**
-- 📫 Cara menghubungi saya: **[Email Kamu]**
-
----
-
-### 🛠️ Teknologi & Tools
-Peralatan tempur yang biasa saya gunakan:
-
-<p align="left">
-  <img src="https://skillicons.dev/icons?i=js,html,css,react,nextjs,nodejs,tailwind,git,figma,mysql" />
-</p>
-
----
-
-### 📊 Statistik GitHub
-Mari kita lihat apa yang telah saya bangun belakangan ini:
-
 <p align="center">
-  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=[USERNAME_KAMU]&show_icons=true&theme=radical&include_all_commits=true&count_private=true" />
-  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=[USERNAME_KAMU]&layout=compact&langs_count=7&theme=radical" />
+    <img src="https://i.ibb.co/pvzfPCQ0/fceb0b3d6946.jpg" width="100%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
+<h1 align="center">Ashema-ESM</h1>
 
----
-
-### 🔗 Mari Berteman!
-Jangan ragu untuk menyapa atau berkolaborasi:
-
-<p align="left">
-<a href="https://linkedin.com/in/[USERNAME_LINKEDIN]" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="LinkedIn" height="30" width="40" /></a>
-<a href="https://instagram.com/[USERNAME_IG]" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="Instagram" height="30" width="40" /></a>
-<a href="https://twitter.com/[USERNAME_TWITTER]" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/twitter.svg" alt="Twitter" height="30" width="40" /></a>
-<a href="https://[WEBSITE_KAMU].com" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/rss.svg" alt="Portfolio" height="30" width="40" /></a>
 </p>
+<p align="center">
+<a href="https://github.com/Karuta33"><img title="Author" src="https://img.shields.io/badge/AUTHOR-KARUTA3-green.svg?style=for-the-badge&logo=github"></a>
 
----
+##
+[![BOT WHATSAPP](https://img.shields.io/badge/WhatsApp%20BOT-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://api.whatsapp.com/send/?phone=6283867665261&text=.menu)
+[![CHANNEL](https://img.shields.io/badge/Channel-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://whatsapp.com/channel/0029Vb76GVfGOj9vnWffUW3o)
+[![GRUP DISKUSI](https://img.shields.io/badge/Owner%20BOT-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/DLXFKfSelau8VnEus2A4iZ)
 
-### ⚡ Fun Fact
-> Saya percaya bahwa baris kode yang terbaik adalah baris kode yang tidak perlu ditulis. (Atau: Saya bisa menghabiskan 3 cangkir kopi hanya untuk memperbaiki satu typo).
+## CATATAN SEBELUM MENGGUNAKAN !!
+- Edit nomor owner di lib/setting.json
+- Edit custom kode di lib/setting.json
+- Pastikan versi NodeJS V20+
+- Script ini 100% GRATIS
+
+### Tentang bot ini 
+- ✔️ | **Simple** 
+- ✔️ | **Multi Device** 
+- ✔️ | **ESM  Code** 
+- ✔️ | **No Button** 
+- ✔️ | **Case** 
+
+#### Cara pakai
+```bash
+$ git clone https://github.com/Karuta33/base-esm
+$ cd base-esm
+$ npm i
+```
+
+---------
+
+## Run
+```bash
+npm start
+```
+
+### Flags
+- `--autocleartmp` : Automatically clear tmp folder every 5 minutes.
+
+
+
+
+#
+### Terms
+1. Dont sell this script!
+2. Dont forget to star this repository!
+3. Follow my GitHub!
+4. Use with your own risk!
+
+---------
+
+### Thanks To
+[![WhiskeySockets](https://github.com/WhiskeySockets.png?size=100)](https://github.com/WhiskeySockets/Baileys)
+
+<h1 align="center">Follow my github</h1>

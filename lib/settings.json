@@ -1,10 +1,11 @@
+/* Untuk nomor omner lanjut 628xxxx jangan +62xxxxx,  dan jangan 08*/
 {
-  "ownerNumber": "6288809595220@s.whatsapp.net",
-  "ownerName": "LeyLey",
+  "ownerNumber": "0@s.whatsapp.net",
+  "ownerName": "Karuta",
   "bio": "Jangan ganggu.",
   "BotName": "Ashema Bot",
   "packname": "Create by Ashema",
-  "author": "Ashema",
-  "prefix": "🐦",
+  "author": "Ashema Bot",
+  "prefix": ".",
   "customCode": "KARUTA12"
 }

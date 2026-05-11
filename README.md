@@ -10,7 +10,7 @@
 ##
 [![BOT WHATSAPP](https://img.shields.io/badge/WhatsApp%20BOT-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://api.whatsapp.com/send/?phone=6283867665261&text=.menu)
 [![CHANNEL](https://img.shields.io/badge/Channel-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://whatsapp.com/channel/0029Vb76GVfGOj9vnWffUW3o)
-[![GRUP DISKUSI](https://img.shields.io/badge/Owner%20BOT-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/DLXFKfSelau8VnEus2A4iZ)
+[![GRUP DISKUSI](https://img.shields.io/badge/GRUP%20DISKUSI-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/DLXFKfSelau8VnEus2A4iZ)
 
 ## CATATAN SEBELUM MENGGUNAKAN !!
 - Edit nomor owner di lib/setting.json

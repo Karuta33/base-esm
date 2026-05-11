@@ -44,5 +44,6 @@ npm start
 
 ### Thanks To
 [![WhiskeySockets](https://github.com/WhiskeySockets.png?size=100)](https://github.com/WhiskeySockets/Baileys)
+[![Zidni](https://github.com/azumimicucu.png?size=100)](https://github.com/azumimicucu)
 
 <h1 align="center">Follow my github</h1>

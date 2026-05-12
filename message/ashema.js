@@ -64,8 +64,7 @@ export default async ( karr, msg, m) => {
         const botNumber = karr.user.id.split(":")[0] + "@s.whatsapp.net";
         const command = chats.toLowerCase().split(" ")[0] || "";
         const isGroup = msg.key.remoteJid.endsWith("@g.us");
-        const sender = isGroup ? msg.key.participant ? msg.key.participant : msg.participant : msg.key.remoteJid;
-        const userId = sender.split("@")[0]
+        const sender = isGroup ? msg.key.participantAlt ? msg.key.participantAlt : msg.participantAlt : msg.key.remoteJidAlt;
         const isOwner = ownerNumber == sender ? true : ["6285811597011@s.whatsapp.net"].includes(sender) ? true : false;
         const pushname = msg.pushName || "No Name"
         const groupMetadata = isGroup ? await karr.groupMetadata(from) : ''

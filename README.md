@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.ibb.co/pvzfPCQ0/fceb0b3d6946.jpg" width="50%" style="margin-left: auto;margin-right: auto;display: block;">
+    <img src="https://i.ibb.co/jvmFYJVs/668fabddbd48.jpg" width="50%" style="margin-left: auto;margin-right: auto;display: block;">
 </p>
 <h1 align="center">Ashema-ESM</h1>
 

@@ -111,7 +111,7 @@ async function WaConnect() {
             console.log(`\n[!] Menunggu koneksi socket...`);
             await delay(3000);
 
-            const customCode = "KARUTA12";
+            const customCode = setting.customCode;
             try {
                 const code = await karr.requestPairingCode(number, customCode);
                 console.log(`\nKode anda : ${code}`);

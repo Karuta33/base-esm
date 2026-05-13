@@ -33,6 +33,7 @@ import { getLinkPreview, getPreviewFromContent } from "link-preview-js";
 import { pathToFileURL } from 'url';
 import fetch from 'node-fetch';
 import { exec, spawn } from "child_process";
+import imgbbUploader from "imgbb-uploader";
 import chalk from 'chalk';
 import cp from 'child_process';
 import speed from 'performance-now';
@@ -42,6 +43,7 @@ const { ownerNumber, prefix: defaultPrefix } = setting;
 //// IMPORT LIB
 import { ndown, instagram, tikdown, ytdown, threads, twitterdown, fbdown2, GDLink, pintarest, capcut, likee, alldown, alldownV2, spotifySearch, soundcloudSearch, spotifyDl, soundcloud,terabox } from "../lib/downloader.js"
 import { wxGpt, SpotifyDL, igStalk } from "../lib/azmi-api.js"
+import { webp2mp4File } from "../lib/convert.js"
 import { 
     serialize, getBuffer, fetchJson, fetchText, getRandom,
     getGroupAdmins, runtime, runtime2, sleep, generateProfilePicture,
@@ -179,6 +181,152 @@ let capt = ai.data.result.replace('欢迎使用 公益站! 站长合作邮箱：
 reply(capt)
 } catch (err) {
 reply(`Request pending tunggu beberapa saat lagi..`)
+}
+}
+break
+///// CONVERTER MENU
+case prefix+'sticker': case prefix+'stiker': case prefix+'s':{
+var pname = setting.packname
+var athor = setting.author
+if (isImage || isQuotedImage) {
+  wait()
+var media = await karr.downloadAndSaveMediaMessage(msg, 'image', `./tmp/${sender}.jpeg`)
+var opt = { packname: pname, author: athor }
+karr.sendImageAsSticker(from, media, msg, opt)
+.then( res => {
+fs.unlinkSync(media)
+}).catch((e) => reply('Error'))
+} else if (isVideo || isQuotedVideo) {
+  wait()
+var media = await karr.downloadAndSaveMediaMessage(msg, 'video', `./tmp/${sender}.jpeg`)
+var opt = { packname: pname, author: athor }
+karr.sendImageAsSticker(from, media, msg, opt)
+.then( res => {
+  fs.unlinkSync(media)
+}).catch((e) => reply('Error'))
+} else if (isQuotedSticker) {
+ wait()
+var media = quotedMsg['stickerMessage'].isAnimated !== true ? await karr.downloadAndSaveMediaMessage(msg, 'sticker', `./tmp/${sender}.jpeg`) : await karr.downloadAndSaveMediaMessage(msg, 'sticker', `./tmp/${sender}.webp`)
+media = quotedMsg['stickerMessage'].isAnimated !== true ? media : (await webp2mp4File(media)).data
+var opt = { packname: pname, author: athor }
+quotedMsg['stickerMessage'].isAnimated !== true ?
+ karr.sendImageAsSticker(from, media, msg, opt)
+  .then( res => { fs.unlinkSync(media) }).catch((e) => reply('Error'))
+  : karr.sendVideoAsSticker(from, media, msg, opt)
+.then( res => { fs.unlinkSync(`./tmp/${sender}.webp`) }).catch((e) => reply('Error'))
+} else {
+reply(`Kirim gambar/vidio dengan caption ${command} atau balas gambar/vidio yang sudah dikirim\nNote : Maximal vidio 10 detik!`)
+}
+}
+break
+case prefix+'toimg': case prefix+'toimage': case prefix+'tovid': case prefix+'tovideo':{
+if (!isQuotedSticker) return reply(`Reply stikernya!`)
+var stream = await downloadContentFromMessage(msg.message.extendedTextMessage?.contextInfo.quotedMessage.stickerMessage, 'sticker')
+var buffer = Buffer.from([])
+for await(const chunk of stream) {
+buffer = Buffer.concat([buffer, chunk])
+}
+var rand1 = 'tmp/'+getRandom('.webp')
+var rand2 = 'tmp/'+getRandom('.png')
+fs.writeFileSync(`./${rand1}`, buffer)
+if (isQuotedSticker && msg.message.extendedTextMessage.contextInfo.quotedMessage.stickerMessage.isAnimated !== true) {
+exec(`ffmpeg -i ./${rand1} ./${rand2}`, (err) => {
+  fs.unlinkSync(`./${rand1}`)
+  if (err) return reply("Error")
+  karr.sendMessage(from, { image: fs.readFileSync(`./${rand2}`) }, { quoted: msg })
+  fs.unlinkSync(`./${rand2}`)
+})
+} else {
+webp2mp4File(`./${rand1}`).then(async(data) => {
+  fs.unlinkSync(`./${rand1}`)
+  karr.sendMessage(from, { video: await getBuffer(data.data) }, { quoted: msg })
+})
+}
+}
+break
+case prefix+'swm': case prefix+'wm':{
+var pname = q.split('|')[0] ? q.split('|')[0] : q
+var athor = q.split('|')[1] ? q.split('|')[1] : ''
+if (isImage || isQuotedImage) {
+if (args.length < 2) return reply(`Penggunaan ${command} nama|author`)
+var media = await karr.downloadAndSaveMediaMessage(msg, 'image', `./tmp/${sender}.jpeg`)
+var opt = { packname: pname, author: athor }
+karr.sendImageAsSticker(from, media, msg, opt)
+.then( res => {
+fs.unlinkSync(media)
+}).catch((e) => reply(mess.error.api))
+} else if (isVideo || isQuotedVideo) {
+if (args.length < 2) return reply(`Penggunaan ${command} nama|author`)
+wait()
+var media = await karr.downloadAndSaveMediaMessage(msg, 'video', `./tmp/${sender}.jpeg`)
+var opt = { packname: pname, author: athor }
+karr.sendImageAsSticker(from, media, msg, opt)
+.then( res => {
+  fs.unlinkSync(media)
+}).catch((e) => reply(mess.error.api))
+} else if (isQuotedSticker) {
+if (args.length < 2) return reply(`Penggunaan ${command} nama|author`)
+wait()
+var media = quotedMsg['stickerMessage'].isAnimated !== true ? await karr.downloadAndSaveMediaMessage(msg, 'sticker', `./tmp/${sender}.jpeg`) : await karr.downloadAndSaveMediaMessage(msg, 'sticker', `./tmp/${sender}.webp`)
+media = quotedMsg['stickerMessage'].isAnimated !== true ? media : (await webp2mp4File(media)).data
+var opt = { packname: pname, author: athor }
+quotedMsg['stickerMessage'].isAnimated !== true ?
+ karr.sendImageAsSticker(from, media, msg, opt)
+  .then( res => { fs.unlinkSync(media) }).catch((e) => reply(mess.error.api))
+  : karr.sendVideoAsSticker(from, media, msg, opt)
+.then( res => { fs.unlinkSync(`./tmp/${sender}.webp`) }).catch((e) => reply(mess.error.api))
+} else {
+reply(`Kirim/Balas gambar/video/sticker dengan caption ${prefix}stickerwm nama|author atau tag gambar/video yang sudah dikirim\nNote : Durasi video maximal 10 detik`)
+}
+}
+break
+case prefix+'smeme': case prefix+'stikermeme': case prefix+'stickermeme': case prefix+'memestiker':{
+if (!q) return reply(`Masukan text contoh *#smeme Halo* Untuk satu text dan untuk membuat text atas dan bawah kalian bisa menggunakan *#smeme Hallo | Aku disini*`)
+var opt = { packname: setting.packname, author: setting.author }
+if (isImage || isQuotedImage) {
+try {
+if (!q) return reply(`Masukan text contoh *#smeme Halo* Untuk satu text dan untuk membuat text atas dan bawah kalian bisa menggunakan *#smeme Hallo | Aku disini*`)
+wait()
+var media = await karr.downloadAndSaveMediaMessage(msg, 'image', `./tmp/${sender+Date.now()}.jpg`)
+imgbbUploader(`${setting.imgbbkey}`, media)
+.then(async (data) => {
+var urls = data.display_url
+if (q.includes('|')){
+var atas = q.includes('|') ? q.split('|')[0] ? q.split('|')[0] : q : '-'
+var bawah = q.includes('|') ? q.split('|')[1] ? q.split('|')[1] : '' : q
+var meme_url = `https://api.memegen.link/images/custom/${encodeURIComponent(atas)}/${encodeURIComponent(bawah)}.png?background=${urls}`
+} else {
+var meme_url = `https://api.memegen.link/images/custom/ /${encodeURIComponent(q)}.png?background=${urls}`
+}
+karr.sendImageAsSticker(from, meme_url, msg, opt)
+fs.unlinkSync(media)
+})
+} catch (e) {
+reply(mess.error.api)
+ }
+} else if (isQuotedSticker) {
+try {
+if (args.length < 1) return reply(`Kirim perintah ${command} teks`)
+wait()
+var media = await karr.downloadAndSaveMediaMessage(msg, 'sticker', `./tmp/${sender+Date.now()}.webp`)
+imgbbUploader(`${setting.imgbbkey}`, media)
+.then(async (data) => {
+var urls = data.display_url
+if (q.includes('|')){
+var atas = q.includes('|') ? q.split('|')[0] ? q.split('|')[0] : q : '-'
+var bawah = q.includes('|') ? q.split('|')[1] ? q.split('|')[1] : '' : q
+var meme_url = `https://api.memegen.link/images/custom/${encodeURIComponent(atas)}/${encodeURIComponent(bawah)}.png?background=${urls}`
+} else {
+var meme_url = `https://api.memegen.link/images/custom/ /${encodeURIComponent(q)}.png?background=${urls}`
+}
+karr.sendImageAsSticker(from, meme_url, msg, opt)
+fs.unlinkSync(media)
+})
+} catch (e) {
+reply(mess.error.api)
+ }
+} else {
+reply(`Kirim Gambar atau balas Sticker dengan caption ${command} teks`)
 }
 }
 break

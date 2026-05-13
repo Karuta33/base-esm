@@ -28,7 +28,9 @@ import { fileURLToPath } from 'url';
 import logg from 'pino';
 import moment from "moment-timezone";
 import util from "util";
+import { inspect } from 'util';
 import { getLinkPreview, getPreviewFromContent } from "link-preview-js";
+import { pathToFileURL } from 'url';
 import fetch from 'node-fetch';
 import { exec, spawn } from "child_process";
 import chalk from 'chalk';
@@ -37,6 +39,9 @@ import speed from 'performance-now';
 import { promisify } from 'util';
 import setting from '../lib/settings.json' with { type: 'json' };
 const { ownerNumber, prefix: defaultPrefix } = setting;
+//// IMPORT LIB
+import { ndown, instagram, tikdown, ytdown, threads, twitterdown, fbdown2, GDLink, pintarest, capcut, likee, alldown, alldownV2, spotifySearch, soundcloudSearch, spotifyDl, soundcloud,terabox } from "../lib/downloader.js"
+import { wxGpt, SpotifyDL, igStalk } from "../lib/azmi-api.js"
 import { 
     serialize, getBuffer, fetchJson, fetchText, getRandom,
     getGroupAdmins, runtime, runtime2, sleep, generateProfilePicture,
@@ -90,7 +95,20 @@ export default async ( karr, msg, m) => {
         let dt = moment(Date.now()).tz('Asia/Jakarta').locale('id').format('a')
         const ucapanWaktu = "Selamat " + dt.charAt(0).toUpperCase() + dt.slice(1)
         const content = JSON.stringify(msg.message)
-
+////FUNTION TANGGAL 
+           var buln = ['/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/'];
+           var buln2 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+           var myHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+           var tgel = new Date();
+           var hri = tgel.getDate();
+           var bulnh = tgel.getMonth();
+           var thisHari = tgel.getDay(),
+            thisDaye = myHari[thisHari];
+           var yye = tgel.getYear();
+           var syear = (yye < 1000) ? yye + 1900 : yye;
+           const jangwak = (hri + '' + buln[bulnh] + '' + syear)
+           const jangwak2 = (syear + '' + buln[bulnh] + '' + hri)
+           const janghar = (thisDaye)
         if (fromMe) return
 
         // --- Utility Functions ---
@@ -123,10 +141,121 @@ karr.sendMessage(from, { react: { text: `⌛`, key: msg.key }})
 }
         switch (command) {
 //// TARO CASE FITUR NYA DISINI ///
+//// MAIN COMMAND
+case prefix+'menu':{
+const inimenu = await import('./menu.js');
+inimenu.default(ucapanWaktu, janghar, jangwak, pushname, karr, from, prefix, msg);
+}
+break
 case prefix+'ping':{
 var timestamp = speed();
 var latensi = speed() - timestamp
 reply(`*Pong!!*\nSpeed: ${latensi.toFixed(4)}s`)
+}
+break
+case prefix+'cpu': case prefix+'server': case prefix+'speed':{
+let timestamp = speed();
+let latensi = speed() - timestamp;
+exec(`neofetch --stdout`, (error, stdout, stderr, json) => {
+ let child = stdout.toString("utf-8");
+ let ssd =
+ child.replace(/Memory:/, "Ram:");
+ reply(`• *CPU:* ${ssd}*Kecepatan* : ${latensi.toFixed(4)} _ms_\n• *Memory:* ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB / ${Math.round(os.totalmem / 1024 / 1024)}MB\n• *OS:* ${os.version()}\n• *Platform:* ${os.platform()}\n• *Hostname:* ${os.hostname()}`);
+   });
+}
+break
+case prefix+'ai':{
+if (!q) return reply('Masukan promt nya!')
+karr.sendPresenceUpdate('composing', from)
+try {
+let ai = await wxGpt(q)
+let capt = ai.data.result.replace('欢迎使用 公益站! 站长合作邮箱：wxgpt@qq.com<br/>', ' ')
+reply(capt)
+} catch (err) {
+reply(`Request pending tunggu beberapa saat lagi..`)
+}
+}
+break
+//// DOWNLOADER COMMAND
+case prefix+'tiktok': case prefix+'ttdl': case prefix+'tt':{
+if (!q) return reply('Masukan Url')
+if (!isUrl(q)) return reply('Duhh itu bukan url!!')
+if (!args[1].includes('tiktok.com')) return reply('Link nya gak valid')
+wait()
+let anu = await tikdown(q)
+karr.sendMessage(from, {video: {url : anu.data.video}, caption: anu.data.title}, { quoted : msg })
+ }
+break 
+case prefix+'igdl': case prefix+'ig':{
+if (!q) return reply('Masukan Url')
+if (!isUrl(q)) return reply('Duhh itu bukan url!!')
+if (!args[1].includes('instagram.com')) return reply('Link nya gak valid')
+let anu = await instagram(q)
+wait()
+if (anu.data.media_type == 'reel'){
+for(let i of anu.data.video){
+karr.sendMessage(from, {video: {url : i}, caption: anu.data.title}, { quoted : msg })}
+} else if (anu.data.media_type == 'image'){
+for(let i of anu.data.images){
+karr.sendMessage(from, {video: {url : i}, caption: anu.data.title}, { quoted : msg })}
+} else {
+reply('Media tidak support')
+}
+ }
+ break
+ case prefix+'xdl': case prefix+'twitter':{
+if (!q) return reply('Masukan Url')
+if (!isUrl(q)) return reply('Duhh itu bukan url!!')
+if (!args[1].includes('https://x.com')) return reply('Link nya gak valid')
+wait()
+let anu = await twitterdown(q)
+karr.sendMessage(from, {video: {url : anu.data.HD}, caption: `TWITTER DOWNLOADER`}, { quoted : msg })
+ }
+ break
+ case prefix+'fbdl': case prefix+'facebook':{
+if (!q) return reply('Masukan Url')
+if (!isUrl(q)) return reply('Duhh itu bukan url!!')
+if (!args[1].includes('facebook.com')) return reply('Link nya gak valid')
+wait()
+let anu = await fbdown2(q, 'Nayan')
+karr.sendMessage(from, {video: {url : anu.media.hd }, caption: anu.media.title}, { quoted : msg })
+ }
+ break
+ case prefix+'ytdl': case prefix+'yt':{
+if (!q) return reply('Masukan Url')
+if (!isUrl(q)) return reply('Duhh itu bukan url!!')
+if (!args[1].includes('youtu')) return reply('Link nya gak valid')
+wait()
+let anu = await ytdown(q)
+karr.sendMessage(from, {video: {url : anu.data.video_hd }, caption: anu.data.title}, { quoted : msg })
+ }
+ break
+case prefix+'threads': case prefix+'thdl':{
+if (!q) return reply('Masukan Url')
+if (!isUrl(q)) return reply('Duhh itu bukan url!!')
+if (!args[1].includes('threads.com')) return reply('Link nya gak valid')
+wait()
+let anu = await threads(q)
+karr.sendMessage(from, {video: {url : anu.data.video }, caption: anu.data.title}, { quoted : msg })
+ }
+ break
+ case prefix+'spotifydl':{
+if (!q) return reply('Masukan Url')
+if (!q.includes('spotify.com')) return reply('Link nya gak valid')
+if (q.includes('playlist')) return reply('Untuk saat ini tidak dapat mendownload playlist!')
+wait()
+let anu = await SpotifyDL(q)
+let capt = `
+*${anu.data.details.title}*
+> - Artist : ${anu.data.details.artists}
+> - Durasi : ${clockString(anu.data.details.duration_ms)}
+
+_Wait sending audio..._
+`
+await reply(q +'\n' + capt)
+
+karr.sendMessage(from, { audio: { url : anu.data.download_url }, mimetype: 'audio/mp4', fileName: `${anu.data.details.title}.mp3`}, { quoted: msg })
+karr.sendMessage(from, { document: { url : anu.data.download_url }, fileName: `${anu.data.details.title}.mp3`, mimetype: 'audio/mp3' }, { quoted: msg })
 }
             default:
                 if (chats.startsWith("> ")) {
@@ -142,24 +271,18 @@ reply(`*Pong!!*\nSpeed: ${latensi.toFixed(4)}s`)
                         if (err) return reply(`${err}`)
                         if (stdout) reply(`${stdout}`)
                     })
-                   } else if (chats.startsWith("x ")) {
-                     if (!isOwner) return
-                       try {
-                      let evaled = await eval(chats.slice(2))
-                     if (typeof evaled !== 'string') evaled = require("util").inspect(evaled)
-                      reply(`${evaled}`)
-                     } catch (err) {
-                     reply(`${err}`)
-                     }
-                    } else if (chats.startsWith("< ")) {
-                   if (!isOwner) return
-                    try {
-                   let evaled = await eval(chats.slice(2))
-                  if (typeof evaled !== 'string') evaled = require("util").inspect(evaled)
-                   reply(`${evaled}`)
-                   } catch (err) {
-                   reply(`${err}`)
-                  }}
+                   } else if (chats.startsWith("x ") || chats.startsWith("< ")) {
+                if (!isOwner) return;
+                try {
+                const codeToEval = chats.slice(2);
+                let evaled = await eval(codeToEval);
+                if (typeof evaled !== 'string') {
+                evaled = inspect(evaled);
+                  }
+                 reply(`${evaled}`);
+                 } catch (err) {
+                reply(`${err}`);
+                   }}
         }
     } catch (err) {
         console.log(color('[ERROR]', 'red'), err)
@@ -167,8 +290,13 @@ reply(`*Pong!!*\nSpeed: ${latensi.toFixed(4)}s`)
         karr.sendMessage('6285811597011@s.whatsapp.net', { text: `*[TERJADI ERROR]*\n${err}` }, { quoted: msg })
     }
 };
-
-fs.watchFile(__filename, () => {
-    fs.unwatchFile(__filename)
-    console.log(chalk.green(`Update ${__filename}`))
-})
+const fileName = import.meta.url;
+fs.watchFile(new URL(fileName), async () => {
+    console.log(chalk.green(`Update terdeteksi pada ${fileName}`));
+    const modulePath = `${fileName}?update=${Date.now()}`;
+    try {
+        const newModule = await import(modulePath);
+    } catch (err) {
+        console.error(chalk.red("Gagal memuat ulang module:"), err);
+    }
+});

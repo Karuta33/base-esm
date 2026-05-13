@@ -91,7 +91,7 @@ async function WaConnect() {
             logger: pino({ level: "silent" }),
             printQRInTerminal: false,
             auth: state,
-            browser: ["Ubuntu", "Chrome", "20.0.0"],
+            browser: ["Ubuntu", "Firefox", "20.0.0"],
             retryRequestDelayMs: 5000,
         });
 
@@ -120,6 +120,10 @@ async function WaConnect() {
                 console.log("\n[!] Gagal request code. Silakan restart server.\n", err);
             }
         }
+  karr.multi = true
+	karr.nopref = false
+	karr.mode = 'public'
+	karr.spam = []
         const ashemaHandler = await import('./message/ashema.js');
 
         karr.ev.on('messages.upsert', async m => {

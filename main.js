@@ -36,6 +36,7 @@ import {
     getGroupAdmins, runtime, sleep, generateProfilePicture,
     makeid, makeid2, removeEmojis, calculate_age, bytesToSize, checkBandwidth 
 } from "./lib/myfunc.js";
+import { makeInMemoryStore } from "./lib/store.js"
 import { color, mylog, infolog } from "./lib/color.js";
 
 const { Spinner } = clui;
@@ -70,6 +71,10 @@ function nocache(module, cb = () => { }) {
 }
 
 const reconnect = new Spinner(chalk.redBright(` reconnecting..`));
+const store = makeInMemoryStore({
+    logger: pino({ level: 'silent' }),
+    maxMessagesPerChat: 500 // optional
+})
 
 const getPosiSaying = (from, _db) => {
     let posi = null;
@@ -96,8 +101,9 @@ async function WaConnect() {
         });
 
         title();
-          //    store.bind(karr.ev);
-
+      
+          store.bind(karr.ev);
+          
         if (!karr.authState.creds.registered) {
             console.log("\nSilahkan masukan nomor whatsapp anda");
             const inputNumber = await question('MASUKKAN NOMOR (628xxx) : ');
@@ -135,7 +141,7 @@ async function WaConnect() {
             msg.Device = await getDevice(msg.key.id);
             
             // Memanggil handler
-            ashemaHandler.default(karr, msg, m);
+            ashemaHandler.default(store, karr, msg, m);
         });
 
         karr.ev.on('connection.update', async (update) => {

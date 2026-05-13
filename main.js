@@ -37,6 +37,7 @@ import {
     makeid, makeid2, removeEmojis, calculate_age, bytesToSize, checkBandwidth 
 } from "./lib/myfunc.js";
 import { makeInMemoryStore } from "./lib/store.js"
+import { imageToWebp, videoToWebp, writeExifImg, writeExifVid } from "./lib/exif.js"
 import { color, mylog, infolog } from "./lib/color.js";
 
 const { Spinner } = clui;

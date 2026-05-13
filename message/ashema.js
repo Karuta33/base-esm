@@ -58,9 +58,15 @@ const __dirname = path.dirname(__filename);
 
 moment.tz.setDefault("Asia/Jakarta").locale("id");
 
-export default async ( karr, msg, m) => {
+export default async (store, karr, msg, m) => {
     try {
-        const { type, isQuotedMsg, quotedMsg, mentioned, now, fromMe, isBaileys } = msg;
+        const { type, quotedMsg, mentioned, now, fromMe, isBaileys } = msg;
+        let isQuotedMsg;
+        if (msg.quotedMsg !== null && msg.quotedMsg !== undefined) {
+           isQuotedMsg = true;
+         } else {
+            isQuotedMsg = false;
+        }
         const toJSON = (j) => JSON.stringify(j, null, "\t");
                 const from = msg.key.remoteJid;
         var chats = (type === 'senderKeyDistributionMessage') ? msg.message.conversation : (type === 'conversation' && msg.message.conversation) ? msg.message.conversation : (type === 'imageMessage') && msg.message.imageMessage.caption ? msg.message.imageMessage.caption : (type === 'videoMessage') && msg.message.videoMessage.caption ? msg.message.videoMessage.caption : (type === 'extendedTextMessage') && msg.message.extendedTextMessage.text ? msg.message.extendedTextMessage.text : (type === 'buttonsResponseMessage') && quotedMsg.fromMe && msg.message.buttonsResponseMessage.selectedButtonId ? msg.message.buttonsResponseMessage.selectedButtonId : (type === 'templateButtonReplyMessage') && quotedMsg.fromMe && msg.message.templateButtonReplyMessage.selectedId ? msg.message.templateButtonReplyMessage.selectedId : (type === 'messageContextInfo') ? (msg.message.buttonsResponseMessage?.selectedButtonId || msg.message.listResponseMessage?.singleSelectReply.selectedRowId) : (type == 'listResponseMessage') && quotedMsg.fromMe && msg.message.listResponseMessage.singleSelectReply.selectedRowId ? msg.message.listResponseMessage.singleSelectReply.selectedRowId : ""

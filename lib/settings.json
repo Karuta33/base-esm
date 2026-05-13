@@ -3,8 +3,9 @@
   "ownerName": "Karuta",
   "bio": "Jangan ganggu.",
   "BotName": "Ashema Bot",
-  "packname": "Create by Ashema",
-  "author": "Ashema Bot",
+  "packname": "Create by",
+  "author": "Ashema",
   "prefix": ".",
+  "imgbbkey": "Ambil key kalian di https://api.imgbb.com/",
   "customCode": "KARUTA12"
 }

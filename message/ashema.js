@@ -39,6 +39,7 @@ import cp from 'child_process';
 import speed from 'performance-now';
 import { promisify } from 'util';
 import setting from '../lib/settings.json' with { type: 'json' };
+import mess from '../lib/response.json' with { type: 'json' };
 const { ownerNumber, prefix: defaultPrefix } = setting;
 //// IMPORT LIB
 import { ndown, instagram, tikdown, ytdown, threads, twitterdown, fbdown2, GDLink, pintarest, capcut, likee, alldown, alldownV2, spotifySearch, soundcloudSearch, spotifyDl, soundcloud,terabox } from "../lib/downloader.js"
@@ -46,13 +47,13 @@ import { wxGpt, SpotifyDL, igStalk } from "../lib/azmi-api.js"
 import { webp2mp4File } from "../lib/convert.js"
 import { 
     serialize, getBuffer, fetchJson, fetchText, getRandom,
-    getGroupAdmins, runtime, runtime2, sleep, generateProfilePicture,
+    getGroupAdmins, getGroupAdminsid, runtime, runtime2, sleep, generateProfilePicture,
     makeid, makeid2, removeEmojis, calculate_age, bytesToSize, checkBandwidth 
 } from "../lib/myfunc.js";
 
 import { 
     smsg, formatp, tanggal, formatDate, getTime, isUrl, 
-    clockString, jsonformat, parseMention, reSize 
+    clockString, jsonformat, parseMention, parseMention2, reSize 
 } from "../lib/otherfunc.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -146,6 +147,29 @@ export default async (store, karr, msg, m) => {
         const mentionUser = mention != undefined ? mention.filter(n => n) : []
 const wait = () => {
 karr.sendMessage(from, { react: { text: `⌛`, key: msg.key }})
+}
+async function groupSatus(jid, content) {
+  const inside = await generateWAMessageContent(content, {
+    upload: karr.waUploadToServer
+  });
+  const messageSecret = crypto.randomBytes(32);
+  const mig = generateWAMessageFromContent(jid, {
+    messageContextInfo: {
+      messageSecret 
+    },
+    groupStatusMessageV2: {
+      message: {
+        ...inside,
+        messageContextInfo: {
+          messageSecret
+        }
+      }
+    }
+  }, {});
+  await karr.relayMessage(jid, mig.message, {
+    messageId: mig.key.id
+  });
+  return mig;
 }
         switch (command) {
 //// TARO CASE FITUR NYA DISINI ///
@@ -328,6 +352,181 @@ reply(mess.error.api)
 } else {
 reply(`Kirim Gambar atau balas Sticker dengan caption ${command} teks`)
 }
+}
+break
+//// GROUP COMMAND
+case prefix+'tagall':{
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+let teks = `*TAG ALL MEMBER*\nPesan : ${q ? q : 'kosong'}\n\n`
+for (let mem of groupMembers) {
+teks += `⭔ @${mem.id.split('@')[0]}\n`
+}
+karr.sendMessage(from, { text: teks, mentions: groupMembers.map(a => a.id) }, { quoted: msg })
+}
+break
+case prefix+'accall': {
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+try {
+let groupMetadata = await karr.groupMetadata(from)
+let pendingRequests = await karr.groupRequestParticipantsList(from)
+if (!pendingRequests || pendingRequests.length === 0)
+return reply("❗Tidak ada permintaan bergabung yang perlu disetujui!")
+for (let user of pendingRequests) {
+await karr.groupRequestParticipantsUpdate(from, [user.jid], "approve")
+}
+reply(`✅ Berhasil menerima semua *${pendingRequests.length}* permintaan bergabung di grup *${groupMetadata.subject}*!`)
+} catch (e) {
+console.log(e)
+reply("❌ Terjadi kesalahan saat memproses permintaan!")
+}
+}
+break
+case prefix+'rejectall': {
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+try {
+let groupMetadata = await karr.groupMetadata(from)
+let pendingRequests = await karr.groupRequestParticipantsList(from)
+
+if (!pendingRequests || pendingRequests.length === 0)
+return reply("❗ Tidak ada permintaan bergabung yang perlu ditolak!")
+
+for (let user of pendingRequests) {
+await karr.groupRequestParticipantsUpdate(from, [user.jid], "reject")
+}
+
+reply(`🚫 Semua *${pendingRequests.length}* permintaan bergabung di grup *${groupMetadata.subject}* telah ditolak.`)
+} catch (e) {
+console.log(e)
+reply("❌ Terjadi kesalahan saat memproses penolakan!")
+}
+}
+break
+case prefix+'delete': case prefix+'del': case prefix+'d':{
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isQuotedMsg) return reply(`Balas chat yang ingin dihapus`)
+if (quotedMsg.fromMe) {
+karr.sendMessage(from, { delete: { fromMe: true, id: quotedMsg.id, remoteJid: from }})
+} else if (!quotedMsg.fromMe) {
+karr.sendMessage(from, { delete: { remoteJid: from, fromMe: false, id: quotedMsg.id, participant: mentionUser[0] }})
+}
+}
+break
+case prefix+'listadmin':{
+if (!isGroup) return reply(mess.OnlyGrup)
+let no = 1
+let teks = '*LIST ADMIN*'
+for (let i of getGroupAdminsid(groupMembers)) {
+let id = args && /\d+\-\d+@g.us/.test(args[0]) ? args[0] : i
+yeh = Object.keys(store.presences[from])
+isOnline = yeh.includes(i)
+ 	teks += `\n${no++} @${i.split("@")[0]}\n`
+ 	teks += ` Status : ${isOnline ? 'Online✅' : 'Offline🚫'}`
+}
+reply2(teks)
+}
+break
+case prefix+'dor': case prefix+'kick':{
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+if (mentionUser.length !== 0) {
+karr.groupParticipantsUpdate(from, [mentionUser[0]], "remove")
+.then( res => { mentions(`Sukses mengeluarkan @${mentionUser[0].split("@")[0]}`, [mentionUser[0]], true) })
+.catch(() => reply(mess.error.api))
+} else if (isQuotedMsg) {
+karr.groupParticipantsUpdate(from, [quotedMsg.sender], "remove")
+.then( res => { mentions(`Sukses mengeluarkan @${quotedMsg.sender.split("@")[0]}`, [quotedMsg.sender], true) })
+.catch(() => reply(mess.error.api))
+} else {
+reply(`Tag atau balas pesan member yang ingin di kick`)
+}
+}
+break
+case prefix+'promote': case prefix+'pm':{
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+if (mentionUser.length !== 0) {
+karr.groupParticipantsUpdate(from, [mentionUser[0]], "promote")
+.then( res => { mentions(`Sukses menjadikan @${mentionUser[0].split("@")[0]} sebagai admin`, [mentionUser[0]], true) })
+.catch(() => reply(mess.error.api))
+} else if (isQuotedMsg) {
+karr.groupParticipantsUpdate(from, [quotedMsg.sender], "promote")
+.then( res => { mentions(`Sukses menjadikan @${quotedMsg.sender.split("@")[0]} sebagai admin`, [quotedMsg.sender], true) })
+.catch(() => reply(mess.error.api))
+} else {
+reply(`Tag atau balas pesan member yang ingin dijadikan admin`)
+}
+}
+break
+case prefix+'demote':{
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+if (mentionUser.length !== 0) {
+karr.groupParticipantsUpdate(from, [mentionUser[0]], "demote")
+.then( res => { mentions(`Sukses menjadikan @${mentionUser[0].split("@")[0]} sebagai member biasa`, [mentionUser[0]], true) })
+.catch(() => reply(mess.error.api))
+} else if (isQuotedMsg) {
+karr.groupParticipantsUpdate(from, [quotedMsg.sender], "demote")
+.then( res => { mentions(`Sukses menjadikan @${quotedMsg.sender.split("@")[0]} sebagai member biasa`, [quotedMsg.sender], true) })
+.catch(() => reply(mess.error.api))
+} else {
+reply(`Tag atau balas pesan admin yang ingin dijadikan member biasa`)
+}
+}
+break
+case prefix+'swgc':{
+if (!isGroupAdmins && !isOwner) return reply(mess.GrupAdmin)
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+if (isImage || isQuotedImage) {
+var mediar = await karr.downloadAndSaveMediaMessage(msg, 'image', `./tmp/${sender}.jpeg`)
+if (isQuotedMsg) {
+let options = { image: fs.readFileSync(`./tmp/${sender}.jpeg`), caption: quotedMsg.chats ? quotedMsg.chats : '' };
+await groupSatus(from, options);
+reply('Status terkirim')
+} else {
+let options = { image: fs.readFileSync(`./tmp/${sender}.jpeg`), caption: q ? q : '' };
+await groupSatus(from, options);
+reply('Status terkirim')
+}
+fs.unlinkSync(mediar)
+} else if (isVideo || isQuotedVideo) {
+var mediar = await karr.downloadAndSaveMediaMessage(msg, 'video', `./tmp/${sender}.mp4`)
+if (isQuotedMsg) {
+let options = { video: fs.readFileSync(`./tmp/${sender}.mp4`), caption: quotedMsg.chats ? quotedMsg.chats : '' };
+await groupSatus(from, options);
+reply('Status terkirim')
+} else {
+let options = { video: fs.readFileSync(`./tmp/${sender}.mp4`), caption: q ? q : '' };
+await groupSatus(from, options);
+reply('Status terkirim')
+}
+fs.unlinkSync(mediar)
+} else {
+reply(`Kirim gambar/vidio dengan caption ${command} atau balas gambar/vidio yang sudah dikirim`)
+}
+}
+break
+case prefix+'fitnah':{
+if (args.length < 2) return reply(`Kirim perintah *${command}* @tag|pesantarget|pesanbot`)
+var org = q.split("|")[0]
+var target = q.split("|")[1];
+var bot = q.split("|")[2];
+if (!org.startsWith('@')) return reply('Tag orangnya')
+if (!target) return reply(`Masukkan pesan target!`)
+if (!bot) return reply(`Masukkan pesan bot!`)
+var mens = parseMention2(target)
+var msg1 = { key: { fromMe: false, participant: `${parseMention2(org)}`, remoteJid: from ? from : '' }, message: { extemdedTextMessage: { text: `${target}`, contextInfo: { mentionedJid: mens }}}}
+var msg2 = { key: { fromMe: false, participant: `${parseMention2(org)}`, remoteJid: from ? from : '' }, message: { conversation: `${target}` }}
+karr.sendMessage(from, { text: bot, mentions: mentioned }, { quoted: mens.length > 2 ? msg1 : msg2 })
 }
 break
 //// DOWNLOADER COMMAND

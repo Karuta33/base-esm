@@ -25,7 +25,7 @@
 - ✔️ | **Simple** 
 - ✔️ | **Multi Device** 
 - ✔️ | **ESM  Code** 
-- ✔️ | **No Button** 
+- ✔️ | **Button** 
 - ✔️ | **Case**
 - ✔️ | **Baileys original Latest**
 - ✔️ | **Thumbnail Message** 

@@ -10,6 +10,7 @@ import makeWASocket, {
     generateWAMessage,
     getContentType,
     getDevice,
+    generateMessageID,
     generateWAMessageFromContent,
     proto,
     prepareWAMessageMedia,
@@ -25,6 +26,7 @@ import NodeCache from "node-cache";
 import readline from "readline";
 import { parsePhoneNumber } from "libphonenumber-js";
 import os from 'os';
+import sharp from "sharp";
 import util from "util";
 import clui from 'clui';
 import path from 'path';
@@ -231,12 +233,6 @@ async function WaConnect() {
            }
            return karr.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
         }
-                   karr.sendMessageUrl = async(chatId, message, options = {})=>{
-           let generate = await generateWAMessage(chatId, message, options)
-           let type2 = getContentType(generate.message)
-           if ('contextInfo' in options) generate.message[type2].contextInfo = options?.contextInfo
-           if ('contextInfo' in message) generate.message[type2].contextInfo = message?.contextInfo
-           return await karr.relayMessage(chatId, generate.message, { messageId: generate.key.id })}
            karr.sendMessageFromContent = async(jid, message, options = {}) => {
 		var option = { contextInfo: {}, ...options }
 		var prepare = await generateWAMessageFromContent(jid, message, option)
@@ -245,6 +241,45 @@ async function WaConnect() {
 	 }
            function parseMention(text = '') {
             return [...text.matchAll(/@([0-9]{5,16}|0)/g)].map(v => v[1] + '@s.whatsapp.net')}
+           karr.sendWithThumbnail = async (jid, options = {}, msg) => {
+
+             const { text = '', title = '', body = '', thumbnailUrl, sourceUrl = '' } = options
+
+             const thumbRes = await fetch(thumbnailUrl, {
+               headers: { 'User-Agent': 'Mozilla/5.0' }
+             })
+             const raw = Buffer.from(await thumbRes.arrayBuffer())
+
+             const compressed = await sharp(raw)
+               .jpeg({ quality: 90, progressive: true })
+               .toBuffer()
+
+             const uploaded = await prepareWAMessageMedia(
+               { image: compressed },
+               { upload: karr.waUploadToServer, mediaTypeOverride: 'thumbnail-link' }
+             )
+             const im = uploaded.imageMessage
+             const meta = await sharp(compressed).metadata()
+
+             await karr.relayMessage(jid, {
+               extendedTextMessage: {
+                 text: `${sourceUrl}\n\n${text}`,
+                 matchedText: sourceUrl,
+                 description: body,
+                 title,
+                 previewType: 0,
+                 renderLargerThumbnail: true,
+                 jpegThumbnail: im.jpegThumbnail,
+                 thumbnailDirectPath: im.directPath,
+                 thumbnailSha256: im.fileSha256,
+                 thumbnailEncSha256: im.fileEncSha256,
+                 mediaKey: im.mediaKey,
+                 mediaKeyTimestamp: im.mediaKeyTimestamp,
+                 thumbnailHeight: meta.height || 576,
+                 thumbnailWidth: meta.width || 1024
+               }
+             }, { messageId: generateMessageID() })
+           }
            karr.sendImageAsSticker = async (jid, path, quoted, options = {}) => {
            let buff = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
            let buffer

@@ -26,7 +26,9 @@
 - ✔️ | **Multi Device** 
 - ✔️ | **ESM  Code** 
 - ✔️ | **No Button** 
-- ✔️ | **Case** 
+- ✔️ | **Case**
+- ✔️ | **Baileys original Latest**
+- ✔️ | **Thumbnail Message** 
 
 #### Cara pakai
 ```bash

@@ -12,8 +12,10 @@ Total Module : ${Object.keys(pcg.dependencies).length}
 
 *${ps}MAIN COMMAND${ps}*
 > | ${prefix}menu [Menu bot]
+> | ${prefix}speedtest [Speed bot]
 > | ${prefix}ping [Check Bot]
 > | ${prefix}cpu [Device info]
+> | ${prefix}script [Script Bot]
 > | ${prefix}ai [Ai]
 
 *${ps}DOWNLOADER COMMAND${ps}*
@@ -43,6 +45,7 @@ Total Module : ${Object.keys(pcg.dependencies).length}
 > | ${prefix}demote [Demote admin]
 > | ${prefix}swgc [Status gc]
 > | ${prefix}fitnah [Fitnah mem]
+> | ${prefix}linkgrup [Link Group]
 `
 await karr.sendMessage(from, { text: mn }, { quoted: msg, messageId: 'KARUTA_' + makeid(9).toUpperCase() })
 }

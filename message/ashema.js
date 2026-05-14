@@ -45,6 +45,7 @@ const { ownerNumber, prefix: defaultPrefix } = setting;
 import { ndown, instagram, tikdown, ytdown, threads, twitterdown, fbdown2, GDLink, pintarest, capcut, likee, alldown, alldownV2, spotifySearch, soundcloudSearch, spotifyDl, soundcloud,terabox } from "../lib/downloader.js"
 import { wxGpt, SpotifyDL, igStalk } from "../lib/azmi-api.js"
 import { webp2mp4File } from "../lib/convert.js"
+import { Button, AIRich } from "../lib/button.js"
 import { 
     serialize, getBuffer, fetchJson, fetchText, getRandom,
     getGroupAdmins, getGroupAdminsid, runtime, runtime2, sleep, generateProfilePicture,
@@ -183,6 +184,54 @@ case prefix+'ping':{
 var timestamp = speed();
 var latensi = speed() - timestamp
 reply(`*Pong!!*\nSpeed: ${latensi.toFixed(4)}s`)
+}
+break
+case prefix+'speedtest': {
+let exec = promisify(cp.exec).bind(cp)
+let o
+reply('Testing speed..')
+try {
+o = await exec('speedtest --share')
+} catch (e) {
+o = e
+} finally {
+let { stdout, stderr } = o
+let link = stdout.match(/https?:\/\/www\.speedtest\.net\/result\/\d+\.png/)[0]
+if (stdout.trim()) reply(stdout)
+if (stderr.trim()) reply(stderr)
+}
+}
+break
+case prefix+'sc': case prefix+'script':{
+let capt = `
+*CATATAN PENGGUNAAN !!*
+- Edit nomor owner di lib/setting.json
+- Edit custom kode di lib/setting.json
+- Pastikan versi NodeJS V20+
+- Script ini 100% GRATIS
+
+*TENTANH BOT INI*
+- ✔️ | *Simple*
+- ✔️ | *Multi Device* 
+- ✔️ | *ESM  Code*
+- ✔️ | *Case*
+- ✔️ | *Baileys original Latest*
+- ✔️ | *Thumbnail Message*
+`
+const btn = new Button()
+.setTitle('*ASHEMA ESM V1*')
+.setBody(capt)
+.setFooter("© Ashema Karuta")
+
+.addUrl(
+  "Ashema Script",
+  "https://github.com/Karuta33/base-esm"
+)
+await btn.run(
+  from,
+  karr,
+  msg
+)
 }
 break
 case prefix+'cpu': case prefix+'server': case prefix+'speed':{
@@ -513,6 +562,30 @@ fs.unlinkSync(mediar)
 } else {
 reply(`Kirim gambar/vidio dengan caption ${command} atau balas gambar/vidio yang sudah dikirim`)
 }
+}
+break
+case prefix+'linkgrup': case prefix+'link': case prefix+'linkgc': case prefix+'linkgroup':{
+if (!isGroup) return reply(mess.OnlyGrup)
+if (!isBotGroupAdmins) return reply(mess.BotAdmin)
+var url = await karr.groupInviteCode(from).catch(() => reply(mess.error.api))
+let link = 'https://chat.whatsapp.com/'+url
+const btn = new Button()
+.setTitle(`• Nama grup : ${groupName}\n• Id : ${from}`)
+.setFooter("© Ashema Karuta")
+
+.addUrl(
+  "LINK NYA",
+  link
+)
+.addCopy(
+  "COPPY LINK",
+  link
+)
+await btn.run(
+  from,
+  karr,
+  msg
+)
 }
 break
 case prefix+'fitnah':{

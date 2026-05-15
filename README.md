@@ -16,6 +16,7 @@
 [![GRUP DISKUSI](https://img.shields.io/badge/GRUP%20DISKUSI-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/DLXFKfSelau8VnEus2A4iZ)
 
 ## CATATAN SEBELUM MENGGUNAKAN !!
+- Jangan lupa star dan fork nya kakak
 - Edit nomor owner di lib/setting.json
 - Edit custom kode di lib/setting.json
 - Pastikan versi NodeJS V20+

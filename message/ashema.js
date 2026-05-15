@@ -28,6 +28,8 @@ import { fileURLToPath } from 'url';
 import logg from 'pino';
 import moment from "moment-timezone";
 import util from "util";
+import yts from "yt-search";
+import * as mathjs from 'mathjs';
 import { inspect } from 'util';
 import { getLinkPreview, getPreviewFromContent } from "link-preview-js";
 import { pathToFileURL } from 'url';
@@ -44,10 +46,11 @@ const { ownerNumber, prefix: defaultPrefix } = setting;
 //// IMPORT LIB
 import { ndown, instagram, tikdown, ytdown, threads, twitterdown, fbdown2, GDLink, pintarest, capcut, likee, alldown, alldownV2, spotifySearch, soundcloudSearch, spotifyDl, soundcloud,terabox } from "../lib/downloader.js"
 import { wxGpt, SpotifyDL, igStalk } from "../lib/azmi-api.js"
+import { allsurah, getSurah, quranAudio, randomDoa, surah } from "../lib/alquran.js"
 import { webp2mp4File } from "../lib/convert.js"
 import { Button, AIRich } from "../lib/button.js"
 import { 
-    serialize, getBuffer, fetchJson, fetchText, getRandom,
+    serialize, getBuffer, fetchJson, fetchText, getRandom, pickRandom,
     getGroupAdmins, getGroupAdminsid, runtime, runtime2, sleep, generateProfilePicture,
     makeid, makeid2, removeEmojis, calculate_age, bytesToSize, checkBandwidth 
 } from "../lib/myfunc.js";
@@ -172,6 +175,15 @@ async function groupSatus(jid, content) {
   });
   return mig;
 }
+               function mentions(teks, mems = [], id) {
+               if (id == null || id == undefined || id == false) {
+               let res = karr.sendMessage(from, { text: teks, mentions: mems })
+               return res
+               } else {
+               let res = karr.sendMessage(from, { text: teks, mentions: mems }, { quoted: msg })
+               return res
+               }
+               }
         switch (command) {
 //// TARO CASE FITUR NYA DISINI ///
 //// MAIN COMMAND
@@ -403,6 +415,255 @@ reply(`Kirim Gambar atau balas Sticker dengan caption ${command} teks`)
 }
 }
 break
+case prefix+'qc':{
+wait()
+if (q){
+if (q.includes('-d')) {
+if (isQuotedImage) {
+var media = await karr.downloadAndSaveMediaMessage(msg, 'image', `./tmp/${sender+Date.now()}.jpg`)
+let data = await imgbbUploader(`${setting.imgbbkey}`, media)
+try {
+var linkppuserp = await karr.profilePictureUrl(mentionUser[0], 'image')
+} catch {
+var linkppuserp = 'https://telegra.ph/file/e323980848471ce8e2150.png'
+}
+const getname = await karr.getName(mentionUser[0])
+const json = {
+  "type": "quote",
+  "format": "png",
+  "backgroundColor": "#1b1429",
+  "width": 512,
+  "height": 768,
+  "scale": 2,
+  "messages": [
+    {
+      "entities": [],
+      "media": {
+        "url": data.display_url
+      },
+      "avatar": true,
+      "from": {
+        "id": 1,
+        "name": getname,
+        "photo": {
+          "url": linkppuserp
+        }
+      },
+      "text": quotedMsg.chats,
+      "replyMessage": {}
+    }
+  ]
+}
+const response = axios.post('https://bot.lyo.su/quote/generate', json, {
+headers: {'Content-Type': 'application/json'}
+//https://bot.lyo.su/quote/generate
+}).then(res => {
+const buffer = Buffer.from(res.data.result.image, 'base64')
+var opt = { packname: setting.packname, author: setting.author }
+karr.sendImageAsSticker(from, buffer, msg, opt)
+});
+fs.unlinkSync(media)
+} else if (isQuotedMsg){
+try {
+var linkppuserp = await karr.profilePictureUrl(mentionUser[0], 'image')
+} catch {
+var linkppuserp = 'https://telegra.ph/file/e323980848471ce8e2150.png'
+}
+const getname = await karr.getName(mentionUser[0])
+const json = {
+  "type": "quote",
+  "format": "png",
+  "backgroundColor": "#1b1429",
+  "width": 512,
+  "height": 768,
+  "scale": 2,
+  "messages": [
+    {
+      "entities": [],
+      "avatar": true,
+      "from": {
+        "id": 1,
+        "name": getname,
+        "photo": {
+          "url": linkppuserp
+        }
+      },
+      "text": quotedMsg.chats,
+      "replyMessage": {}
+    }
+  ]
+};
+const response = axios.post('https://bot.lyo.su/quote/generate', json, {
+headers: {'Content-Type': 'application/json'}
+}).then(res => {
+    const buffer = Buffer.from(res.data.result.image, 'base64')
+var opt = { packname: setting.packname, author: setting.author }
+karr.sendImageAsSticker(from, buffer, msg, opt)
+});
+} else if(q){
+try {
+var linkppuserp = await karr.profilePictureUrl(sender, 'image')
+} catch {
+var linkppuserp = 'https://telegra.ph/file/e323980848471ce8e2150.png'
+}
+const json = {
+  "type": "quote",
+  "format": "png",
+  "backgroundColor": "#1b1429",
+  "width": 512,
+  "height": 768,
+  "scale": 2,
+  "messages": [
+    {
+      "entities": [],
+      "avatar": true,
+      "from": {
+        "id": 1,
+        "name": pushname,
+        "photo": {
+          "url": linkppuserp
+        }
+      },
+      "text": q.replace('-d', ''),
+      "replyMessage": {}
+    }
+  ]
+};
+const response = axios.post('https://bot.lyo.su/quote/generate', json, {
+headers: {'Content-Type': 'application/json'}
+}).then(res => {
+    const buffer = Buffer.from(res.data.result.image, 'base64')
+var opt = { packname: setting.packname, author: setting.author }
+karr.sendImageAsSticker(from, buffer, msg, opt)
+});
+}
+} else {
+try {
+var linkppuserp = await karr.profilePictureUrl(sender, 'image')
+} catch {
+var linkppuserp = 'https://telegra.ph/file/e323980848471ce8e2150.png'
+}
+const json = {
+  "type": "quote",
+  "format": "png",
+  "backgroundColor": "#FFFFFF",
+  "width": 512,
+  "height": 768,
+  "scale": 2,
+  "messages": [
+    {
+      "entities": [],
+      "avatar": true,
+      "from": {
+        "id": 1,
+        "name": pushname,
+        "photo": {
+          "url": linkppuserp
+        }
+      },
+      "text": q,
+      "replyMessage": {}
+    }
+  ]
+};
+const response = axios.post('https://bot.lyo.su/quote/generate', json, {
+headers: {'Content-Type': 'application/json'}
+}).then(res => {
+    const buffer = Buffer.from(res.data.result.image, 'base64')
+var opt = { packname: setting.packname, author: setting.author }
+karr.sendImageAsSticker(from, buffer, msg, opt)
+});
+}
+} else if (isQuotedImage) {
+var media = await karr.downloadAndSaveMediaMessage(msg, 'image', `./tmp/${sender+Date.now()}.jpg`)
+data = await imgbbUploader(`${setting.imgbbkey}`, media)
+try {
+var linkppuserp = await karr.profilePictureUrl(mentionUser[0], 'image')
+} catch {
+var linkppuserp = 'https://telegra.ph/file/e323980848471ce8e2150.png'
+}
+const getname = await karr.getName(mentionUser[0])
+const json = {
+  "type": "quote",
+  "format": "png",
+  "backgroundColor": "#FFFFFF",
+  "width": 512,
+  "height": 768,
+  "scale": 2,
+  "messages": [
+    {
+      "entities": [],
+      "media": {
+        "url": data.display_url
+      },
+      "avatar": true,
+      "from": {
+        "id": 1,
+        "name": getname,
+        "photo": {
+          "url": linkppuserp
+        }
+      },
+      "text": quotedMsg.chats,
+      "replyMessage": {}
+    }
+  ]
+}
+const response = axios.post('https://bot.lyo.su/quote/generate', json, {
+headers: {'Content-Type': 'application/json'}
+}).then(res => {
+const buffer = Buffer.from(res.data.result.image, 'base64')
+var opt = { packname: setting.packname, author: setting.author }
+karr.sendImageAsSticker(from, buffer, msg, opt)
+});
+fs.unlinkSync(media)
+} else if (isQuotedMsg){
+try {
+var linkppuserp = await karr.profilePictureUrl(mentionUser[0], 'image')
+} catch {
+var linkppuserp = 'https://telegra.ph/file/e323980848471ce8e2150.png'
+}
+const getname = await karr.getName(mentionUser[0])
+const json = {
+  "type": "quote",
+  "format": "png",
+  "backgroundColor": "#FFFFFF",
+  "width": 512,
+  "height": 768,
+  "scale": 2,
+  "messages": [
+    {
+      "entities": [],
+      "avatar": true,
+      "from": {
+        "id": 1,
+        "name": getname,
+        "photo": {
+          "url": linkppuserp
+        }
+      },
+      "text": quotedMsg.chats,
+      "replyMessage": {}
+    }
+  ]
+};
+const response = axios.post('https://bot.lyo.su/quote/generate', json, {
+headers: {'Content-Type': 'application/json'}
+}).then(res => {
+    const buffer = Buffer.from(res.data.result.image, 'base64')
+var opt = { packname: setting.packname, author: setting.author }
+karr.sendImageAsSticker(from, buffer, msg, opt)
+});
+} else {
+reply(`Kirim perintah ${command} teks
+Atau reply chat ketik ${command}
+gunakan -d untuk mode dark contoh :
+${command} Halo -d
+reply ${command} -d
+`)
+}
+}
+break
 //// GROUP COMMAND
 case prefix+'tagall':{
 if (!isGroup) return reply(mess.OnlyGrup)
@@ -602,6 +863,37 @@ var msg2 = { key: { fromMe: false, participant: `${parseMention2(org)}`, remoteJ
 karr.sendMessage(from, { text: bot, mentions: mentioned }, { quoted: mens.length > 2 ? msg1 : msg2 })
 }
 break
+case prefix+'play':{
+if (!q) return reply(`Masukan Query!`)
+wait()
+ var dat = await yts(q)
+ let dataa = dat.videos[0]
+ var initk = `
+ *══ DATA DI DAPATKAN ══*
+
+*${dataa.title}*
+> | Duration : ${dataa.timestamp}
+> | Viewers : ${dataa.views}
+> | Upload At : ${dataa.ago}
+> | Author : ${dataa.author.name}
+> | https://youtu.be/${dataa.videoId}
+
+_Wait sending audio...._
+`
+
+let textnya = await reply(initk)
+let datal = await ytdown(dataa.url)
+var nme = `./tmp/${Date.now()}.mp4`
+ fs.writeFileSync(nme, await getBuffer(datal.data.video))
+ var ran = './tmp/'+getRandom('.mp3')
+ exec(`ffmpeg -i ${nme} ${ran}`, async (err) => {
+let anu = await getBuffer(dataa.thumbnail)
+karr.sendMessage(from, { audio: fs.readFileSync(ran), mimetype: 'audio/mp4', fileName: `${dataa.title}.mp3`}, { quoted: textnya })
+fs.unlinkSync(nme)
+fs.unlinkSync(ran)
+ })
+}
+break
 //// DOWNLOADER COMMAND
 case prefix+'tiktok': case prefix+'ttdl': case prefix+'tt':{
 if (!q) return reply('Masukan Url')
@@ -682,6 +974,122 @@ await reply(q +'\n' + capt)
 
 karr.sendMessage(from, { audio: { url : anu.data.download_url }, mimetype: 'audio/mp4', fileName: `${anu.data.details.title}.mp3`}, { quoted: msg })
 karr.sendMessage(from, { document: { url : anu.data.download_url }, fileName: `${anu.data.details.title}.mp3`, mimetype: 'audio/mp3' }, { quoted: msg })
+}
+break
+//// RELIGI COMMAND
+case prefix+'quran': case prefix+'alquran':{
+let heh = `Gunakan nomor surah!, bisa lihat nomor surah di ${prefix}allsurah 
+
+Contoh penggunaan:
+
+- ${command} 1 (full surah)
+
+- ${command} 1:3 (1 ayat saja)
+
+1:3 berarti Al Fatihah ayat 3`
+if (!q) return reply(heh)
+try {
+if (q.includes(':')){
+let teks1 = q.split(":")[0]
+let teks2 = q.split(":")[1]
+var data = await surah(teks1)
+let num = await mathjs.evaluate(`${teks2}-1`)
+reply(`${data.data.ayat[num].teksArab}\n\n${data.data.ayat[num].teksLatin}\n\n_${data.data.ayat[num].teksIndonesia}_(${data.data.namaLatin}:${teks2})`).catch((err) => reply(`RESULT ${q} NOT FOUND`))
+} else {
+var data = await surah(q)
+var teks = `${data.data.nama} ( ${data.data.namaLatin} )\n\n`
+for (let i of data.data.ayat) {
+  teks += `(${i.nomorAyat}) ${i.teksArab}\n${i.teksLatin}\n\n`
+}
+reply(teks).catch((err) => reply(`RESULT ${q} NOT FOUND`))
+}
+} catch (err) {
+reply(`RESULT ${q} NOT FOUND`)
+}
+}
+break
+case prefix+'listsurah': case prefix+'allsurah':{
+allsurah().then( data => {
+var teks = `List Surah Al-Qur\'an\n\n`
+for (let i of data.result) {
+  teks += `*Nomor :* ${i.index}\n*Surah :* ${i.surah} (${i.latin})\n*Jumlah Ayat :* ${i.jumlah_ayat}\n\n`
+}
+ teks += `Jika ingin mengambil salah satu Surah ketik ${prefix}alquran nomor atau ${prefix}alquran nomor:ayat`
+reply(teks)
+})
+}
+break
+case prefix+'quranaudio': case prefix+'alquranaudio':{
+let heh = `Gunakan nomor surah untuk mengambil audio bisa lihat nomor surah di ${prefix}allsurah 
+
+Contoh penggunaan:
+
+- ${command} 1 (full surah)
+
+- ${command} 1:3 (1 ayat saja)
+
+1:3 berarti Al Fatihah ayat 3`
+if (!q) return reply(heh)
+wait()
+try {
+if (q.includes(':')){
+let anu = await quranAudio(q)
+karr.sendMessage(from, {audio: { url: anu.data.audio }, mimetype:'audio/mpeg', ptt:true }, {quoted:msg}).catch((err) => reply(`RESULT ${q} NOT FOUND`))
+} else {
+let data = await surah(q)
+karr.sendMessage(from, {audio: { url: data.data.audioFull?.['01'] }, mimetype:'audio/mpeg', ptt:true }, {quoted:msg}).catch((err) => reply(`RESULT ${q} NOT FOUND`))
+}
+} catch (err) {
+reply(`RESULT ${q} NOT FOUND`)
+}
+}
+break
+case prefix+'kisahnabi':{
+if (!q) return reply(`Masukan nama nabi di bawah ini \n
+ Adam 
+ Idris 
+ Nuh 
+ Hud 
+ Saleh 
+ Ibrahim 
+ Ismail 
+ Ishaq 
+ Luth 
+ Yaqub 
+ Yusuf 
+ Syuaib 
+ Ayyub 
+ Dzulkifli 
+ Musa 
+ Harun 
+ Daud 
+ Sulaiman 
+ Ily 
+ Ilya 
+ Yunus 
+ Zakaria 
+ Yahya 
+ Isa 
+ Muhammad
+ 
+ Contoh : ${command} isa
+ `)
+try {
+let heh = q.toLowerCase()
+if (heh.includes('muhammad')){
+let heh = q.toLowerCase().replace('muhammad', 'muhamad')
+}
+let anu = await fetchJson(`https://github.com/YukiShima4/Skreper/raw/master/religi/kisah%20nabi/${heh}.json`)
+reply(`*Kisah nabi ${anu[0].name}* \n\n${anu[0].description}`).catch((e) => reply(`RESULT ${q} NOT FOUND`))
+} catch (err) {
+reply(`RESULT ${q} NOT FOUND`)
+}
+}
+break
+case prefix+'randomdoa':{
+let anuk = await randomDoa()
+let anu = pickRandom(anuk.result)
+reply(`${anu.doa}\n\n${anu.arab}\n${anu.latin}\n\n${anu.id}`).catch((err) => reply(`RESULT ${q} NOT FOUND`))
 }
             default:
                 if (chats.startsWith("> ")) {

@@ -16,6 +16,7 @@ Total Module : ${Object.keys(pcg.dependencies).length}
 > | ${prefix}ping [Check Bot]
 > | ${prefix}cpu [Device info]
 > | ${prefix}script [Script Bot]
+> | ${prefix}play [Search Song]
 > | ${prefix}ai [Ai]
 
 *${ps}DOWNLOADER COMMAND${ps}*
@@ -33,6 +34,7 @@ Total Module : ${Object.keys(pcg.dependencies).length}
 > | ${prefix}tovid [Sticker to vid]
 > | ${prefix}smeme [Meme sticker]
 > | ${prefix}swm [Take sticker]
+> | ${prefix}qc [qc sticker]
 
 *${ps}GROUP COMMAND${ps}*
 > | ${prefix}kick [Remove member]
@@ -40,12 +42,25 @@ Total Module : ${Object.keys(pcg.dependencies).length}
 > | ${prefix}accall [Acc join]
 > | ${prefix}rejectall [Rej join]
 > | ${prefix}delete [Delete msg]
-> | ${prefix}listadmin [List admin]
 > | ${prefix}promote [Promote member]
 > | ${prefix}demote [Demote admin]
 > | ${prefix}swgc [Status gc]
 > | ${prefix}fitnah [Fitnah mem]
 > | ${prefix}linkgrup [Link Group]
+
+*${ps}RELIGI COMMAND${ps}*
+> | ${prefix}quran [Get surah]
+> | ${prefix}listsurah [List surah]
+> | ${prefix}quranaudio [Audio suran]
+> | ${prefix}kisahnabi [Kisah nabi]
+> | ${prefix}randomdoa [Get doa]
+
 `
-await karr.sendMessage(from, { text: mn }, { quoted: msg, messageId: 'KARUTA_' + makeid(9).toUpperCase() })
+await karr.sendWithThumbnail(from, { 
+  text: mn, 
+  title: 'Ashema Simple Bot', 
+  body: '© Ashema Karuta', 
+  thumbnailUrl: 'https://i.ibb.co/TMc3KT4h/187645ae0f10.jpg',
+  sourceUrl: 'https://instagram.com/Yukishima3_' 
+})
 }

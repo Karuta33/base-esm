@@ -95,8 +95,9 @@ import {
 import {
     wxGpt,
     SpotifyDL,
-    igStalk
-} from "../lib/azmi-api.js"
+    igStalk,
+    Sticker
+} from "../lib/ashema-api.js"
 import {
     allsurah,
     getSurah,

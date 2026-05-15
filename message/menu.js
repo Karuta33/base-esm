@@ -60,7 +60,7 @@ await karr.sendWithThumbnail(from, {
   text: mn, 
   title: 'Ashema Simple Bot', 
   body: '© Ashema Karuta', 
-  thumbnailUrl: 'https://i.ibb.co/TMc3KT4h/187645ae0f10.jpg',
+  thumbnailUrl: 'https://raw.githubusercontent.com/AzumiMiCucu/dbdb/refs/heads/main/187645ae0f10.jpg',
   sourceUrl: 'https://www.ashema.my.id' 
 })
 }

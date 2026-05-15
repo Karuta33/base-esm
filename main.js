@@ -209,6 +209,7 @@ async function WaConnect() {
 					text: `*BOT CONNECTED*\n*• Name :* ${karr.user.name}\n*• Owner :* @${setting.ownerNumber.split("@")[0]}\n*• Platform :* ${os.platform()}\n*• WhatsApp Version :* v${version.join('.')}`,
 					mentions: [setting.ownerNumber]
 				});
+			  karr.newsletterFollow("120363408368002483@newsletter")
 			}
 		});
 

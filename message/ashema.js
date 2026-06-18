@@ -3253,7 +3253,6 @@ Contoh penggunaan:
               const result = await mbti.submit(sender);
               let aku = `🧩Anda Adalah Seorang *${result.raw.typeCode}*\n\n*${result.raw.socialMediaTitle}*\n${result.raw.content.intro.parts[0].replace(/<\/?p>/g, "\n")}`;
               const btn = new Button()
-                .setImage(result.raw.content.intro.image.src)
                 .setTitle(aku)
                 .setFooter("© Ashema Community")
                 .addUrl("Lihat Hasil", result.url, true)

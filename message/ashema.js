@@ -107,6 +107,7 @@ import {
   Mbti16Personalities,
   Akinator,
   uploadToImgBB,
+  ytmp3,
 } from "../lib/ashema-api.js";
 import {
   allsurah,
@@ -1896,26 +1897,19 @@ _Wait sending audio...._
 `;
 
           let textnya = await reply(initk);
-          let datal = await ytdown(dataa.url);
-          var nme = `./tmp/${Date.now()}.mp4`;
-          fs.writeFileSync(nme, await getBuffer(datal.data.video));
-          var ran = "./tmp/" + getRandom(".mp3");
-          exec(`ffmpeg -i ${nme} ${ran}`, async (err) => {
-            let anu = await getBuffer(dataa.thumbnail);
-            karr.sendMessage(
-              from,
-              {
-                audio: fs.readFileSync(ran),
-                mimetype: "audio/mp4",
-                fileName: `${dataa.title}.mp3`,
-              },
-              {
-                quoted: textnya,
-              },
-            );
-            fs.unlinkSync(nme);
-            fs.unlinkSync(ran);
-          });
+          let datal = await ytmp3(`https://youtu.be/${dataa.videoId}`);
+          let downloadURL = datal.data.result.downloadURL; // tambah .data
+          karr.sendMessage(
+            from,
+            {
+              audio: { url: downloadURL },
+              mimetype: "audio/mp4",
+              fileName: `${dataa.title}.mp3`,
+            },
+            {
+              quoted: textnya,
+            },
+          );
         }
         break;
       //// DOWNLOADER COMMAND
@@ -3329,5 +3323,3 @@ Contoh penggunaan:
     );
   }
 };
-// Hot-reload kini dikelola oleh watchAshema() di main.js (chokidar),
-// jadi self-watch lama dihapus untuk menghindari watcher ganda.
